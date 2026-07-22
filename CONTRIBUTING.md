@@ -1,68 +1,83 @@
-# Contributing
+# Contributing to visvoai
 
-Thanks for looking under the hood. Ground rules first, because this repo has
-one unusual property worth knowing before you open a PR.
+Welcome — and thank you. This guide is written for beginners and for anyone who brings care, intuition, and wisdom to their work. Contribute at your own pace; small, clear steps are better than fast, confused ones.
 
-## Where to say what
+Spirit & intention
+- Work with calm curiosity. If something is unclear, pause, ask, and document what you learned.
+- Treat contributions as learning opportunities: every doc fix, test, or small improvement moves the project (and you) forward.
 
-| You have… | Go to |
-|---|---|
-| a usage question ("how do I…?") | [Discussions → Q&A](https://github.com/VisvoAI/visvoai/discussions/categories/q-a) |
-| a rough idea, not yet a concrete ask | [Discussions → Ideas](https://github.com/VisvoAI/visvoai/discussions/categories/ideas) |
-| a reproducible bug | [an Issue](https://github.com/VisvoAI/visvoai/issues/new/choose) (template asks for the repro) |
-| a concrete, shaped feature request | [an Issue](https://github.com/VisvoAI/visvoai/issues/new/choose) |
-| a security vulnerability | the [private form](https://github.com/VisvoAI/visvoai/security/advisories/new) — never a public issue |
+Quick setup (fork → clone → upstream)
+1. Fork the repository on GitHub.
+2. Clone your fork:
+   - SSH:
+     git clone git@github.com:<your-github-username>/visvoai.git
+   - HTTPS:
+     git clone https://github.com/<your-github-username>/visvoai.git
+3. Enter the repo and add upstream:
+   cd visvoai
+   git remote add upstream https://github.com/ChildrenofIsrael/visvoai.git
+4. Sync and create a branch:
+   git fetch upstream
+   # find upstream default branch with: git remote show upstream
+   git checkout -b feat/setup-dev upstream/main
 
-Ideas that firm up in Discussions graduate to Issues; Issues that turn out
-to be questions get converted back. Nothing is lost either way — this just
-keeps the tracker being a to-do list rather than a mailbox.
+Python dev environment (simple)
+1. Create and activate a venv:
+   python -m venv .venv
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
+2. Upgrade packaging tools:
+   pip install -U pip build setuptools wheel
+3. Install packages in editable mode:
+   pip install -e packages/visvoai-core
+   pip install -e "packages/visvoai-ai[openai]"  # optional extras
+   pip install -e packages/visvoai-cli
 
-## How this repo is maintained
+Notes:
+- The repo uses PEP 420 namespace packages (visvoai.*). Do not add a top-level __init__.py in the namespace root.
+- Install only the provider extras you need.
 
-This is the public half of an open-core monorepo. It is synced (one-way) from
-a private repository whose CI runs the same guards you see here. **PRs are
-welcome and reviewed here** — when accepted, a maintainer applies your commits
-to the source monorepo (authorship preserved via `git am`/cherry-pick) and the
-next sync publishes them back out. Your commit lands with your name on it;
-there may be a short delay between merge and appearance.
+Run linters & tests
+1. (Optional) Install pre-commit and run:
+   pip install pre-commit
+   pre-commit install
+   pre-commit run --all-files
+2. Run package tests:
+   pytest -q packages/visvoai-core
+   pytest -q packages/visvoai-ai
+   pytest -q packages/visvoai-cli
 
-## Conduct
+If tests fail: copy the failing pytest output into the PR or an Issue — that makes it much easier to diagnose and help.
 
-Participation is governed by our [Code of Conduct](./CODE_OF_CONDUCT.md).
+Beginner-friendly first contributions
+- Fix a typo or clarify a README snippet.
+- Improve a docstring or add an example to a README.
+- Fix a small failing test you encounter while setting up.
+- Add a brief note to this file if something in these steps was unclear.
 
-## Sign-off (DCO)
+Branch & commit guidance
+- Branch name: feat/<short-desc> or fix/<short-desc>
+  Example: feat/setup-dev or fix/readme-typo
+- Commit message style:
+  type(scope): short summary
+  body (optional, wrap at ~72 chars)
 
-Commits must carry a `Signed-off-by:` line (`git commit -s`) certifying the
-[Developer Certificate of Origin](https://developercertificate.org/) — you
-wrote the change or have the right to submit it under MIT. This is the
-lightweight alternative to a CLA and keeps future licensing options clean.
-
-## Development setup
-
-Each package is self-contained (uv or plain pip):
-
+Example:
 ```bash
-cd visvoai-cli          # or visvoai-core / visvoai-ai
-uv venv
-uv pip install -e ../visvoai-ai -e ../visvoai-core -e ".[dev]"
-uv run pytest -q
+git checkout -b fix/readme-typo
+git add README.md
+git commit -m "docs(readme): fix typo in setup steps"
+git push -u origin fix/readme-typo
 ```
 
-## House rules
+Pull request checklist
+- Target the upstream default branch (main).
+- Include a short description of what you changed and why.
+- Run tests locally and mention results.
+- If behavior changed, add or update tests; if not, explain.
 
-- **Tests pass, always** — CI runs every package's suite on each PR.
-- **Behavior changes come with tests**; pure refactors must not edit existing
-  tests (that's the proof they're pure).
-- **Comments explain *why*, never *what*** — no filler comments.
-- Each package's `AGENTS.md` describes its conventions — read the one for the
-  area you're touching; update it if you change the module's shape.
-- Versioning: `0.MINOR.PATCH` per package, only the package that changed,
-  with a CHANGELOG entry (visvoai-cli additionally mirrors its changelog to
-  `src/visvoai/cli/assets/` — a test enforces the sync).
+If you want help
+- I can commit this file and open a PR to the repo for you.
+- Or I can walk you through the git commands step-by-step while you run them locally.
+- If something breaks, paste the exact output and Ill help debug.
 
-## Scope guidance
-
-Good first contributions: provider integrations (`visvoai-ai`), CLI tools and
-widgets, docs/examples, test coverage. For anything architectural (new seams,
-new subsystems), open an issue first — the extension-seam design is deliberate
-and we'd rather align before you write code.
+Thank you for contributing thoughtfully — every small step counts.
